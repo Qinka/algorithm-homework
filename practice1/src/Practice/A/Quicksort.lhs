@@ -4,17 +4,32 @@ module Practice.A.Quicksort
        (
        ) where
 
+import System.IO.Unsafe
+import Control.Monad.Random.Class
+
 \end{code}
 
 \begin{code}
-split :: [a] -> Int -> ([a] -> [a]) -> [a]
-split xs i' f = let (l,r) = splitAt i xs
+split :: (Ord a) => Int -> ([a] -> [a]) -> [a] -> [a]
+split _ []  _ = []
+split _ [x] _ = [x]
+split i' xs f = let l = filter (<  guard) xs
+                    r = filter (>= guard) xs
                  in f l ++ f r
   where i = if | i' < 0 = 0
                |  otherwise = i' `mod` length xs
+        guard = xs !! i
 \end{code}
 
-quicksort
+quick sort
 \begin{code}
 quickSort :: [a] -> [a]
+quickSort = split 1 quickSort
+\end{code}
+
+random quick sork
+\begin{code}
+quickSortR :: [a] -> [a]
+qucikSortR xs = split n quickSortR
+  where n = unsafePerformIO $ getRandomR (0,length xs - 1)
 \end{code}
