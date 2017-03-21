@@ -1,7 +1,9 @@
 
 \begin{code}
 module Practice.A.Quicksort
-       (
+       ( split
+       , quickSort
+       , quickSortR
        ) where
 
 import System.IO.Unsafe
