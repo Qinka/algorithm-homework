@@ -29,7 +29,9 @@ library
                    Practice.A.Quicksort
   -- other-modules:
   default-extensions: OverloadedLists
-                       TypeFamilies
+                      TypeFamilies
+                      MultiWayIf
+
   
 
                      
