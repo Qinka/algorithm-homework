@@ -1,4 +1,8 @@
 
+\section{Basic Types and Function}
+
+This part is for the basic function and types.
+
 \begin{code}
 module Practice.A.Types
        ( Heap(..) -- For heap
@@ -15,7 +19,7 @@ module Practice.A.Types
 import GHC.Exts
 \end{code}
 
-\section{Heap}
+\subsection{Heap}
 
 In this part, there a some type and some functions for maintainning and building a heap
 
