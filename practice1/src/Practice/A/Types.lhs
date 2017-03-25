@@ -9,6 +9,7 @@ module Practice.A.Types
        , (<!!)
        , exchange
        , change
+       , modify
        ) where
 
 import GHC.Exts
@@ -56,9 +57,12 @@ exchange heap a' b' = let a'' = (a'-1) `mod` length heap
 \end{code}
 
 \begin{code}
+modify :: Heap a -> Int -> (a -> a) -> Heap a
+modify heap i f = let (l,r) = splitAt i heap
+                  in init l ++ f (last l) : r
+
 change :: Heap a -> Int -> a -> Heap a
-change heap i item = let (l,r) = splitAt i heap
-                     in init l ++ item:r
+change heap i item = modify heap i (\_ -> item)
 \end{code}
 
 

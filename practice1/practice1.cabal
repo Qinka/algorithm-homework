@@ -27,9 +27,12 @@ library
                    Practice.A.FindTwo
                    Practice.A.PriorityQueue
                    Practice.A.Quicksort
+                   Practice.A.Sorts
   -- other-modules:
   default-extensions: OverloadedLists
-                       TypeFamilies
+                      TypeFamilies
+                      MultiWayIf
+                      RankNTypes
   
 
                      
