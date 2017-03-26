@@ -1,6 +1,9 @@
 
 
 \section{Heap Sort}
+\verb|Practice.A.HeapSort|
+\par
+\verb|Practice1/src/Practice/A/HeapSort.lhs|
 
 This part of the codes is about the heap sort.
 

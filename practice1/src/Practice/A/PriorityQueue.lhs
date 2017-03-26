@@ -1,5 +1,8 @@
 
 \section{Priority Queue -- Problem (II)}
+\verb|Practice.A.PriorityQueue|
+\par
+\verb|Practice1/src/Practice/A/PriorityQueue.lhs|
 
 \begin{code}
 module Practice.A.PriorityQueue

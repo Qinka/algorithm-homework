@@ -1,6 +1,9 @@
 
 
 \section{Find Two Element -- Problem (I)}
+\verb|Practice.A.FindTwo|
+\par
+\verb|Practice1/src/Practice/A/FindTwo.lhs|
 
 This part will solve the problem 1: find two elements whose sum is the given value $x$.
 

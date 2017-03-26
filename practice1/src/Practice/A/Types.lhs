@@ -53,16 +53,16 @@ heapParent thisIndex
 
 If we want to find the parent node element:
 \begin{spec}
-heap !! heapParent thisIndex
+heap <!! heapParent thisIndex
 \end{spec}
 
-\item[LEFT]  To get the left-sub node.
+\paragraph{LEFT}  To get the left-sub node.
 \begin{code}
 heapLeft :: Int -> Int
 heapLeft = (*2)
 \end{code}
 
-\item[RIGHT] To get the right-sub node.
+\paragraph{RIGHT} To get the right-sub node.
 \begin{code}
 heapRight :: Int -> Int
 heapRight = (+1) . (*2)
@@ -149,7 +149,7 @@ buildMaxHeap heap = buildMaxHeapStep (heapParent $ length heap) heap
         buildMaxHeapStep n hp = seq n $! buildMaxHeapStep (n-1) $! maxHeapify hp n
 \end{code}
 
-\subsubsection{Others}
+\subsection{Others}
 
 Here, a operator \lstinline|<!!| is defined to handle the difference between the initial values of the Haskell and pseudocode.
 

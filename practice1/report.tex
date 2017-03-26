@@ -5,46 +5,65 @@
 \title{Algorithm Practices Report (I)}
 
 % For define environment for  Haskell
-\usepackage{listings}
+\usepackage{listings,color}
+\usepackage{hyperref}
+
 \lstloadlanguages{Haskell}
 %% For code
-\lstnewenvironment{code}
-{\lstset{}%
+\newcounter{codeline}
+\setcounter{codeline}{1}
+\setcounter{lstnumber}{1}
+\lstnewenvironment{code}[1][]
+{ \setcounter{lstnumber}{\value{codeline}}
+  \lstset{ numbers=left%
+         , firstnumber=last%
+         , #1%
+         }%
     \csname lst@SetFirstLabel\endcsname}
-{\csname lst@SaveFirstLabel\endcsname}
-\lstset{
-    basicstyle=\small\ttfamily,
-    flexiblecolumns=false,
-    basewidth={0.5em,0.45em},
-    literate={+}{{$+$}}1 {/}{{$/$}}1 {*}{{$*$}}1 {=}{{$=$}}1
-    {>}{{$>$}}1 {<}{{$<$}}1 {\\}{{$\lambda$}}1
-    {\\\\}{{\char`\\\char`\\}}1
-    {->}{{$\rightarrow$}}2 {>=}{{$\geq$}}2 {<-}{{$\leftarrow$}}2
-    {<=}{{$\leq$}}2 {=>}{{$\Rightarrow$}}2 
-    {\ .}{{$\circ$}}2 {\ .\ }{{$\circ$}}2
-    {>>}{{>>}}2 {>>=}{{>>=}}2
-    {|}{{$\mid$}}1               
-}
+{ \csname lst@SaveFirstLabel\endcsname
+  \setcounter{codeline}{\value{lstnumber}}
+  }
+
 % For spec
-\lstnewenvironment{spec}
-{\lstset{}%
+\lstnewenvironment{spec}[1][]
+{\lstset{ frame=tblr
+        , #1%
+        }%
     \csname lst@SetFirstLabel\endcsname}
 {\csname lst@SaveFirstLabel\endcsname}
+
+
+% for common
 \lstset{
+    breaklines,
     basicstyle=\small\ttfamily,
     flexiblecolumns=false,
     basewidth={0.5em,0.45em},
-    literate={+}{{$+$}}1 {/}{{$/$}}1 {*}{{$*$}}1 {=}{{$=$}}1
-    {>}{{$>$}}1 {<}{{$<$}}1 {\\}{{$\lambda$}}1
+    literate={+}{{$+$}}1 % plus
+    {/}{{$/$}}1
+    {*}{{$*$}}1
+    {=}{{$=$}}1
+    {>}{{$>$}}1
+    {<}{{$<$}}1
+    {\\}{{$\lambda$}}1
     {\\\\}{{\char`\\\char`\\}}1
-    {->}{{$\rightarrow$}}2 {>=}{{$\geq$}}2 {<-}{{$\leftarrow$}}2
-    {<=}{{$\leq$}}2 {=>}{{$\Rightarrow$}}2 
-    {\ .}{{$\circ$}}2 {\ .\ }{{$\circ$}}2
-    {>>}{{>>}}2 {>>=}{{>>=}}2
-    {|}{{$\mid$}}1               
+    {->}{{$\rightarrow$}}2
+    {>=}{{$\geq$}}2
+    {<-}{{$\leftarrow$}}2
+    {<=}{{$\leq$}}2
+    {=>}{{$\Rightarrow$}}2 
+    {\ .}{{$\circ$}}2
+    {\ .\ }{{$\circ$}}2
+    {>>}{{>>}}2
+    {>>=}{{>>=}}2
+    {|}{{$\mid$}}1      
+    {/=}{{$\neq$}}1         
 }
 % For ignore
 \long\def\ignore#1{}
+
+\def\inputHaskell#1{\setcounter{codeline}{1}\input{#1}\setcounter{codeline}{1}}
+
 
 \begin{document}
     
@@ -58,15 +77,18 @@
     % For all
     %\include{srcsrc/Practice/A/}
     % Import the basic heap type.
-    \include{src/Practice/A/Types.lhs}
+    \inputHaskell{src/Practice/A/Types.lhs}
     % Import the heap sort
-    \include{src/Practice/A/HeapSort.lhs}
+    \inputHaskell{src/Practice/A/HeapSort.lhs}
     % Import the binary find
-    \include{src/Practice/A/BinFind.lhs}
-    % To solve problem 1
-    \include{src/Practice/A/FindTwo.lhs}
-    % To solve problem 2
-    \include{src/Practice/A/PriorityQueue.lhs}
-
+    \inputHaskell{src/Practice/A/BinFind.lhs}
+    % To solve problem 1 : Heap Sort
+    \inputHaskell{src/Practice/A/FindTwo.lhs}
+    % To solve problem 2 : Priority Queue
+    \inputHaskell{src/Practice/A/PriorityQueue.lhs}
+    % To solve problem 3 : Quick Sort
+    \inputHaskell{src/Practice/A/Quicksort.lhs}
+    % To solve problem 4 : Many Sorts
+    \inputHaskell{src/Practice/A/Sorts.lhs}
     
 \end{document}

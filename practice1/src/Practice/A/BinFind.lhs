@@ -1,5 +1,8 @@
 
 \section{Binary Find}
+\verb|Practice.A.BinFind|
+\par
+\verb|Practice1/src/Practice/A/BinFind.lhs|
 
 
 \begin{code}
