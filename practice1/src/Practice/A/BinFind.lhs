@@ -1,4 +1,7 @@
 
+\section{Binary Find}
+
+
 \begin{code}
 module Practice.A.BinFind
        ( binFind
@@ -7,7 +10,8 @@ module Practice.A.BinFind
 
 \end{code}
 
-binary find
+The binary finding to get element we need in $O(n)$.
+
 \begin{code}
 binFind :: [a] -> (a -> Ordering) -> Bool
 binFind [] _ = False
@@ -22,6 +26,18 @@ binFind xs f = seq xs $ case r' of
     LT -> binFind r' f
   where (l',r') = splitAt (length xs `div` 2) xs
 \end{code}
+
+
+
+\paragraph{Comparing Function Generator}
+
+To generate a comparing function, which defined the rules of 
+
+\begin{itemize}
+\item Greater than
+\item Equal to
+\item Less than
+\end{itemize}
 
 \begin{code}
 findIs :: (Eq a,Ord a) => a -> a -> Ordering

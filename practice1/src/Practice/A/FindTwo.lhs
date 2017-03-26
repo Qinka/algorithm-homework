@@ -1,4 +1,9 @@
 
+
+\section{Find Two Element -- Problem (I)}
+
+This part will solve the problem 1: find two elements whose sum is the given value $x$.
+
 \begin{code}
 module Practice.A.FindTwo
        ( findTwo
@@ -10,7 +15,12 @@ import Practice.A.HeapSort
 import Practice.A.BinFind
 \end{code}
 
-for find it
+
+We need an algorithm in $O(n\log{n})$ to sort and an algorithm in $O(\log{n}$ to find the element. And I use heap sort and binary find to this thing.
+
+Firstly, it should be sort. And then, for each element, find out whether there is an element that is what we want.
+
+
 \begin{code}
 findTwo :: (Eq a, Ord a, Num a) => [a] -> a -> Bool
 findTwo xs' s = or $! func <$> sq
