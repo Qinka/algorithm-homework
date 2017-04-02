@@ -70,7 +70,7 @@ The normal count sort.
 
 \begin{code}
 countSort :: [Bool] -> [Bool]
-countSort = (fst <$>) . countSortWith 1 0 . (\x -> (x,x))
+countSort = (fst <$>) . countSortWith 1 0 . map (\x -> (x,x))
 \end{code}
 
 \subsection{``Move'' Sort}
