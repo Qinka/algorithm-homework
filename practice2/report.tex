@@ -1,0 +1,78 @@
+\documentclass{ctexart}
+
+
+% For define environment for  Haskell
+\usepackage{listings,color}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\lstloadlanguages{Haskell}
+%% For code
+\newcounter{codeline}
+\setcounter{codeline}{1}
+\setcounter{lstnumber}{1}
+\lstnewenvironment{code}[1][]
+{ \setcounter{lstnumber}{\value{codeline}}
+  \lstset{ numbers=left%
+         , firstnumber=last%
+         , #1%
+         }%
+    \csname lst@SetFirstLabel\endcsname}
+{ \csname lst@SaveFirstLabel\endcsname
+  \setcounter{codeline}{\value{lstnumber}}
+  }
+
+% For spec
+\lstnewenvironment{spec}[1][]
+{\lstset{ frame=tblr
+        , #1%
+        }%
+    \csname lst@SetFirstLabel\endcsname}
+{\csname lst@SaveFirstLabel\endcsname}
+
+
+% for common
+\lstset{
+    breaklines,
+    basicstyle=\small\ttfamily,
+    flexiblecolumns=false,
+    basewidth={0.5em,0.45em},
+    literate={+}{{$+$}}1 % plus
+    {/}{{$/$}}1
+    {*}{{$*$}}1
+    {=}{{$=$}}1
+    {>}{{$>$}}1
+    {<}{{$<$}}1
+    {\\}{{$\lambda$}}1
+    {\\\\}{{\char`\\\char`\\}}1
+    {->}{{$\rightarrow$}}2
+    {>=}{{$\geq$}}2
+    {<-}{{$\leftarrow$}}2
+    {<=}{{$\leq$}}2
+    {=>}{{$\Rightarrow$}}2 
+    {\ .}{{$\circ$}}2
+    {\ .\ }{{$\circ$}}2
+    {>>}{{>>}}2
+    {>>=}{{>>=}}2
+    {|}{{$\mid$}}1      
+    {/=}{{$\neq$}}1         
+}
+% For ignore
+\long\def\ignore#1{}
+
+\def\inputHaskell#1{\setcounter{codeline}{1}\input{#1}\setcounter{codeline}{1}}
+
+
+\begin{document}
+    
+    %\maketitle
+    
+    % content
+    \newpage
+    \tableofcontents
+    \newpage
+
+    \inputHaskell{src/Practice/B/ShortestPath.lhs}
+    \inputHaskell{src/Practice/B/LCSStr.lhs}
+
+\end{document}
