@@ -13,6 +13,7 @@ module Practice.B.LCSStr
 \end{code}
 
 In this section, I will go with \verb|Problem V|. It is same with longest common substring.
+
 Firstly, let $$X=<x_1, x_2, \dots, x_m>$$, and $$Y=<y_1, y_2, \dots, y_n>$$ to be two sequences,
 and let $$Z=<z_1, z_2, \dots, z_k>$$ to be the longest substring for $X$ and $Y$.
 

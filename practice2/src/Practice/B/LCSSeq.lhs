@@ -82,3 +82,19 @@ For easilier to be used, I defined
 lcs :: Eq a => [a] -> [a] -> Int -> Int -> Direction
 lcs xs ys i j = snd $ lcsMkM xs ys i j
 \end{code}
+
+\subsection{Example \& Test}
+\label{sec:lcsseqtest}
+
+Here I will test this followings codes.
+
+
+\paragraph{Example 1}
+
+For the sequence $X$ is \verb|ALLAAQANKESSSESFISRLLAIVAD|,
+and the sequence $Y$ is \verb|KLQKKLAETEKRCTLLAAQANKENSNESFISRLLAIVAG|.
+\begin{spec}
+let x1 = "xzyzzyx"
+let y1 = "xzyzzyx"
+putStrLn $ mkLCSS
+\end{spec}

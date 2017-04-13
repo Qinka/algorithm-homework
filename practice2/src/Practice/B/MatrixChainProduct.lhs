@@ -122,3 +122,62 @@ mkMCPSolution func i j | i == j = "A_{" ++ show i ++ "}"
                                      ++ mkMCPSolution func (func i' j' + 1) j'
                                      ++ "\\right)"
 \end{code}
+
+\subsection{Example \& Test}
+\label{sec:mcptest}
+
+Here I will test this the followings codes.
+
+For the matrixes product: $M_{a \times b} \times M_{b \times c} \times M_{c \times d}$, it will be represented as $<a,b,c,d>$.
+
+\paragraph{Exmaple 1}
+
+$$<3,5,2,1,10>$$
+\begin{spec}
+let test1 = [3,5,2,1,10] :: [Int]
+putStrLn $ mkMCPSolution (rmv test1) 0 3  
+\end{spec}
+The result is:
+\begin{lstlistings}[language=LaTeX]
+\\left(\\left(A_{0}\\left(A_{1}A_{2}\\right)\\right)A_{3}\\right)
+\end{lstlistings}
+That represents: $\\left(\\left(A_{0}\\left(A_{1}A_{2}\\right)\\right)A_{3}\\right)$.
+
+\paragraph{Exmaple 2}
+
+$$<2,7,3,6,10>$$
+\begin{spec}
+let test2 = [2,7,3,6,10] :: [Int]
+putStrLn $ mkMCPSolution (rmv test2) 0 3
+\end{spec}
+The result is:
+\begin{lstlistings}[language=LaTeX]
+\left(\left(\left(A_{0}A_{1}\right)A_{2}\right)A_{3}\right)
+\end{lstlistings}
+That represents: $\left(\left(\left(A_{0}A_{1}\right)A_{2}\right)A_{3}\right)$.
+
+\paragraph{Example 3}
+
+$$<10,3,15,12,17,2>$$
+\begin{spec}
+let test3 = [10,3,15,12,17,2] :: [Int]
+putStrLn $ mkMCPSolution (rmv test3) 0 4
+\end{spec}
+The result is:
+\begin{lstlistings}[language=LaTeX]
+\left(A_{0}\left(A_{1}\left(A_{2}\left(A_{3}A_{4}\right)\right)\right)\right)
+\end{lstlistings}
+That represents: $\left(A_{0}\left(A_{1}\left(A_{2}\left(A_{3}A_{4}\right)\right)\right)\right)$.
+
+\paragraph{Example 4}
+
+$$<7,2,4,15,20,5>$$
+\begin{spec}
+let test4 = [7,2,4,15,20,5] :: [Int]
+putStrLn $ mkMCPSolution (rmv test4) 0 4
+\end{spec}
+The result is:
+\begin{lstlistings}[language=LaTeX]
+\left(A_{0}\left(\left(\left(A_{1}A_{2}\right)A_{3}\right)A_{4}\right)\right)
+\end{lstlistings}
+That represents: $\left(A_{0}\left(\left(\left(A_{1}A_{2}\right)A_{3}\right)A_{4}\right)\right)$.
