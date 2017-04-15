@@ -1,8 +1,12 @@
 \documentclass{ctexart}
 
 
+\title{??}
+\author{me}
+
 % For define environment for  Haskell
-\usepackage{listings,color}
+\usepackage{listings}
+\usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{amsmath}
 
@@ -15,6 +19,25 @@
 { \setcounter{lstnumber}{\value{codeline}}
   \lstset{ numbers=left%
          , firstnumber=last%
+         , literate={+}{{$+$}}1 % plus
+         {/}{{$/$}}1
+         {*}{{$*$}}1
+         {=}{{$=$}}1
+         {>}{{$>$}}1
+         {<}{{$<$}}1
+         {\\}{{$\lambda$}}1
+         {\\\\}{{\char`\\\char`\\}}1
+         {->}{{$\rightarrow$}}2
+         {>=}{{$\geq$}}2
+         {<-}{{$\leftarrow$}}2
+         {<=}{{$\leq$}}2
+         {=>}{{$\Rightarrow$}}2 
+         {\ .}{{$\circ$}}2
+         {\ .\ }{{$\circ$}}2
+         {>>}{{>>}}2
+         {>>=}{{>>=}}2
+         {|}{{$\mid$}}1      
+         {/=}{{$\neq$}}1  
          , #1%
          }%
     \csname lst@SetFirstLabel\endcsname}
@@ -30,32 +53,20 @@
     \csname lst@SetFirstLabel\endcsname}
 {\csname lst@SaveFirstLabel\endcsname}
 
+% For latex
+\lstnewenvironment{latex}[1][]
+{\lstset{ frame=tblr
+        , #1%
+    }%
+    \csname lst@SetFirstLabel\endcsname}
+{\csname lst@SaveFirstLabel\endcsname}
 
 % for common
 \lstset{
     breaklines,
     basicstyle=\small\ttfamily,
     flexiblecolumns=false,
-    basewidth={0.5em,0.45em},
-    literate={+}{{$+$}}1 % plus
-    {/}{{$/$}}1
-    {*}{{$*$}}1
-    {=}{{$=$}}1
-    {>}{{$>$}}1
-    {<}{{$<$}}1
-    {\\}{{$\lambda$}}1
-    {\\\\}{{\char`\\\char`\\}}1
-    {->}{{$\rightarrow$}}2
-    {>=}{{$\geq$}}2
-    {<-}{{$\leftarrow$}}2
-    {<=}{{$\leq$}}2
-    {=>}{{$\Rightarrow$}}2 
-    {\ .}{{$\circ$}}2
-    {\ .\ }{{$\circ$}}2
-    {>>}{{>>}}2
-    {>>=}{{>>=}}2
-    {|}{{$\mid$}}1      
-    {/=}{{$\neq$}}1         
+    basewidth={0.5em,0.45em},       
 }
 % For ignore
 \long\def\ignore#1{}
@@ -72,8 +83,8 @@
 
 	% For problem one
     \inputHaskell{src/Practice/B/MatrixChainProduct.lhs}
-    \inputHaskell{src/Practice/B/LCCSeq.lhs}
-    \inputHaskell{src/PRactice/B/MaxSum.lhs}
+    \inputHaskell{src/Practice/B/LCSSeq.lhs}
+    \inputHaskell{src/Practice/B/MaxSum.lhs}
     \inputHaskell{src/Practice/B/ShortestPath.lhs}
     \inputHaskell{src/Practice/B/LCSStr.lhs}
 

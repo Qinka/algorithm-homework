@@ -23,9 +23,9 @@ Then we can get an expression:
 \begin{equation*}
   c\left[i,j\right] = \left\{
     \begin{aligned}
-      0 & i = 0 \text{or} j = 0, \\
-      c\left[i-1,j-1\right] +1 & i,j > 0 \text{and} x_i = y_j, \\
-      0 & i,j > 0 \text{and} x_i \neq y_j.
+      0 &\quad i = 0 \,\text{or}\, j = 0, \\
+      c\left[i-1,j-1\right] +1 &\quad i,j > 0 \,\text{and}\, x_i = y_j, \\
+      0 &\quad i,j > 0 \,\text{and}\, x_i \neq y_j.
     \end{aligned}\right.
 \end{equation*}
 
