@@ -32,7 +32,7 @@ Then we can get an expression:
 \begin{code}
 lcsMkM :: Eq a => [a] -> [a] -> Int -> Int -> (Int,Bool)
 lcsMkM xs ys = mkM
-  where mkM i j = if xs !! i == ys !! j
+  where mkM i j = if i >=0 && j >=0 && xs !! i == ys !! j
                   then let nextItem = fst $ lcsMkM xs ys (i-1) (j-1)
                        in(nextItem + 1, True)
                   else (0,False)
@@ -52,3 +52,21 @@ mkLCSSolution' func xs i j | i < 0 || j < 0 = []
 lcs :: Eq a => [a] -> [a] -> Int -> Int -> Bool
 lcs xs ys a b = snd $ lcsMkM xs ys a b
 \end{code}
+
+\subsection{Example \& Test}
+\label{sec:lcsseqtest}
+
+Here I will test this followings codes.
+
+
+\paragraph{Example 1}
+
+
+For the string $X$ is \verb|xzyzzyx|,
+and the  string $Y$ is \verb|xzyzzyx|.
+\begin{spec}
+let x1 = "xzyzzyx"
+let y1 = "zzyx"
+putStrLn $ mkLCSSolution (lcs x1 y1) x1 (length x1 -1) (length y1 - 1)
+\end{spec}
+And the output is \verb|xzzzyx|.

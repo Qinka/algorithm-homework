@@ -34,9 +34,17 @@ spmgMkM gs = mkM
           (p,_,q):_ -> (q,[p])
 \end{code}
 
-example:
+\subsection{Example \& Test}
+\label{sec:lcsseqtest}
+
+Here I will test this followings codes.
+
+
+\paragraph{Example 1}
 \begin{spec}
 gs :: [(Int,Int,Int)]
 gs = [(2,1,9),(3,1,7),(4,1,3),(5,1,2),(6,2,4),(7,2,2),(8,2,1),(6,3,2),(7,3,7),(8,4,11),(7,5,11),(8,5,8),(9,6,6),(10,6,5),(9,7,4),(10,7,3),(10,8,5),(11,8,6),(12,9,4),(12,10,2),(12,11,5)]
+spmgMkM gs   12 1
 \end{spec}
-
+And  then the return is \lstinline|(16,[12,10,6,3])|, that means the shortest path is
+$1 \rightarrow 3 \rightarrow 6 \rightarrow 10 \rightarrow 12$, and that will cost 16.

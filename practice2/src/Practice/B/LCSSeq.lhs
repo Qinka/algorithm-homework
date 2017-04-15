@@ -91,10 +91,11 @@ Here I will test this followings codes.
 
 \paragraph{Example 1}
 
-For the sequence $X$ is \verb|ALLAAQANKESSSESFISRLLAIVAD|,
-and the sequence $Y$ is \verb|KLQKKLAETEKRCTLLAAQANKENSNESFISRLLAIVAG|.
+For the sequence $X$ is \verb|xzyzzyx|,
+and the sequence $Y$ is \verb|xzyzzyx|.
 \begin{spec}
 let x1 = "xzyzzyx"
-let y1 = "xzyzzyx"
-putStrLn $ mkLCSS
+let y1 = "xzxzzyx"
+putStrLn $ mkLCSSolution (lcs x1 y1) x1 (length x1 -1) (length y1 - 1)
 \end{spec}
+And the output is \verb|xzzzyx|.

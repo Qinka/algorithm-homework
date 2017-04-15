@@ -25,3 +25,18 @@ dpMaxSumStep sum b buf (x:xs) | b > 0 = let b' = b + x
                                         in buf `seq` dpMaxSumStep sum' b buf' xs
                               | otherwise =  dpMaxSumStep sum x [x] xs
 \end{code}
+
+\subsection{Example \& Test}
+\label{sec:lcsseqtest}
+
+Here I will test this followings codes.
+
+
+\paragraph{Example 1}
+
+For the list of the integers: $$(-2,11,-4,13,-5,-2)$$
+\begin{spec}
+let list = [-2,11,-4,13,-5,-2] :: [Int]
+sum $ dpMaxSum list
+\end{spec}
+And the output is $20$.
