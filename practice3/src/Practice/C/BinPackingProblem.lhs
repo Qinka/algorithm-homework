@@ -62,7 +62,7 @@ In in function, a function named \lstinline[language=Haskell]{bppMerge} is need.
 \begin{code}
 bppMergeStep :: Integral a => (Ratio a,[Int]) -> [(Ratio a,[Int])] -> [(Ratio a,[Int])] ->  [(Ratio a,[Int])]
 bppMergeStep i as [] = i:as
-bppMergeStep (i,il) ls ((r,rl):rs) = if i + r <= 1 then (i+r,il++rl):ls ++ rs
+bppMergeStep (i,il) ls ((r,rl):rs) = if i + r <= 1 then let i' = (i+r,il++rl) in bppMergeStep i' ls rs
                                      else bppMergeStep (i,il) ((r,rl):ls) rs
 bppMerge :: Integral a => [(Ratio a,[Int])] -> [(Ratio a,[Int])]
 bppMerge [] = []
@@ -105,10 +105,10 @@ ghciLL| rst :: [(Ratio Int,[Int])]
 ghciLL| rst = bppSolve example
 ghciLL| :}
 ghciLL> rst
-[(9 % 10,[1,3,7]),(7 % 10,[10,9]),(4 % 5,[6]),(1 % 1,[8,5]),(7 % 10,[2]),(9 % 10,[4])]
+[(9 % 10,[1,3,7]),(9 % 10,[2,9]),(9 % 10,[4]),(9 % 10,[10,8]),(4 % 5,[6]),(3 % 5,[5])]
 ghciLL> length rst
 6
 \end{ghci}
 
 That means we use 6 bins to hold all items, and each of bin holds:
-$0.9$, $0.7$, $0.8$, $1$, $0.7$, $0.9$.
+$0.9$, $0.9$, $0.9$, $0.9$, $0.8$, $0.6$.
