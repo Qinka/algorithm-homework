@@ -71,6 +71,7 @@ relaxCheck ps is (u,v) w = let (u',_) = ps UVector.! u
 \end{code}
 
 \subsection{Instance of Algorithm}
+\label{sec:bla:ioa}
 
 When the relaxation function was defiend, the fuction of Bellman-Ford algorithm can be defined.
 

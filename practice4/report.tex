@@ -9,6 +9,9 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{amsmath}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri}
 
 % For define environment for  Haskell
 \lstloadlanguages{Haskell}
@@ -97,6 +100,10 @@
     \tableofcontents
     \newpage
 
+    \inputHaskell{src/Practice/D/BellmanFord.lhs}
+    \inputHaskell{src/Practice/D/FastAllPairsShortestPaths.lhs}
+    \inputHaskell{src/Practice/D/BackTracking.lhs}
+    
 
 
 \end{document}
