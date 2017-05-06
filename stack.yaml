@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-8.5
+resolver: nightly-2017-05-06
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -39,6 +39,7 @@ packages:
 - practice1
 - practice2
 - practice3
+- practice4
 
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
