@@ -243,7 +243,7 @@ instance (Fractional a,Ord a,Unbox a) => BackTracking (BinKnap a) where
 The ``current select set'' of this problem should be a list of the bit, and the final result of the problem should be the list of the ones selected.
 \begin{code}
   type Stack       (BinKnap a) = BKStack a
-  type Selects     (BinKnap a) = UV.Vector (Bool,Bool)
+  type Selects     (BinKnap a) = UV.Vector KnapState
   type FinalSelect (BinKnap a) = [a]
 \end{code}
 
@@ -273,7 +273,10 @@ The bound check function of the problem.
 After check the bound, we can check whether a select set is a answers.
 
 \begin{code}
-  isAnswer cfg sel = do
-    
-  
+  isAnswer cfg sel = 
+\end{code}
+
+\begin{code}
+  isEnd cfg sel = return $ UV.length sel == UV.length (itemsOfBK cfg)
+               && UV.and (UV.map sel)
 \end{code}
