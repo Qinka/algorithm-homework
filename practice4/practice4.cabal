@@ -20,9 +20,12 @@ cabal-version:       >=1.10
 library
   exposed-modules:     Practice.D.BellmanFord
                        Practice.D.FastAllPairsShortestPaths
+                       Practice.D.BackTracking
   -- other-modules:       
   default-extensions:  TypeOperators
                        FlexibleContexts
+                       TypeFamilies
+                       FlexibleInstances
   build-depends:       base >=4.9 && <4.10
                      , containers
                      , vector
