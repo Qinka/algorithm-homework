@@ -8,8 +8,10 @@ module Practice.D.BackTracking
        , generalBT
        , NQueens(..)
        , nQueens
+       , bknap
        ) where
 
+import Data.Ratio
 import Control.Monad
 import Control.Monad.Cont
 import Control.Monad.State.Strict
@@ -55,8 +57,8 @@ class BackTracking a where
   isEnd :: a -> Selects a -> BackTrackT (Stack a) r Bool
   next :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
   back :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
-  pushAnswer :: a -> FinalSelect a -> BackTrackT (Stack a) r ()
-  toFinal :: a -> Selects a -> FinalSelect a
+  pushAnswer :: a -> Selects a -> BackTrackT (Stack a) r ()
+  toFinal :: a -> Stack a -> FinalSelect a
 \end{code}
 
 Then type\footnote{with type family} \lstinline|Selects a| is the answer of the current state.
@@ -73,8 +75,8 @@ Next is the general function to solve the back tracking.
 
 \begin{code}
 
-generalBT :: (BackTracking a) => a -> Stack a
-generalBT cfg = runCont' (stepM istate) (\_ -> id) istack
+generalBT :: (BackTracking a) => a -> FinalSelect a
+generalBT cfg = toFinal cfg $ runCont' (stepM istate) (\_ -> id) istack
   where (istack,istate) = initState cfg
         stepM state = do
           iE <- isEnd cfg state
@@ -83,25 +85,13 @@ generalBT cfg = runCont' (stepM istate) (\_ -> id) istack
             bc <- boundCheck cfg state
             if bc then do
               isAnswer cfg state >>=
-                (\iA -> when iA $ pushAnswer cfg (toFinal cfg state))
+                (\iA -> when iA $ pushAnswer cfg state)
               next cfg state >>= stepM
               else do
               back cfg state >>= stepM
         runCont' (BackTrackT m) = runCont m
 
 \end{code}
-\begin{spec}
-generalBT :: (BackTracking a,FinalSelect a ~ fs) => a -> [fs]
-generalBT cfg = step istack istate
-  where (istack,istate) = initState cfg
-        step stack state | isEnd cfg stack state = stack 
-                         | boundCheck cfg state =
-                             let stack' = if isAnswer cfg state
-                                          then pushAnswer cfg (toFinal cfg state) stack
-                                          else stack
-                             in step stack' $ next cfg state
-                         | otherwise = step stack $ back cfg state
-\end{spec}
 
 \subsection{N-Queens(Problem III)}
 \label{sec:bt:nq}
@@ -124,9 +114,9 @@ First of all, the current selecting state of this problem should be \lstinline|V
 and so does the final select.
 
 \begin{code}
-  type Stack       (NQueens a) = [[a]]
+  type Stack       (NQueens a) =         [[a]]
   type Selects     (NQueens a) = UV.Vector a
-  type FinalSelect (NQueens a) =          [a]
+  type FinalSelect (NQueens a) =         [[a]]
 \end{code}
 
 The initial state of the problem should be a list with a element(0).
@@ -145,8 +135,8 @@ And the bound check function of the problem.
           k = len - 1
           xk = UV.head sel
           xi k i = sel UV.! (k - i)
-          place = and [ xi k i /= xk && abs (xi k i - xk)
-                        /= fromIntegral (abs (i - k))
+          place = and [ xi k i /= xk
+                        && abs (xi k i - xk) /= fromIntegral (abs (i - k))
                       | i <- [0..k-1]]
 \end{code}
 
@@ -186,13 +176,13 @@ When the ``back tracking'' is needed, we will call the back tracking function: \
 
 Push the answer to stack.
 \begin{code}
-  pushAnswer _ i = modify (\s -> i:s)
+  pushAnswer cfg i = modify (\s -> UV.toList i:s)
 \end{code}
 
 Finally, we need a function to transform the ``current state select set'' to final answer.
 
 \begin{code}
-  toFinal _ sel = UV.toList sel 
+  toFinal _ =id
 \end{code}
 
 Then the final method for wrapping is the following.
@@ -206,77 +196,14 @@ nQueens n = generalBT (NQueens n)
 \subsection{Binary Knapsack(Problem IV)}
 \label{sec:bt:bk}
 
-Another instance of the back tracking is  binary knapsack problem.
-The elements of the problem includes the informations of the knapsack, and the limit of the weight.
+ 这个真的做不出来了。。
 
 \begin{code}
-data BinKnap a = BinKnap { itemsOfBK :: UV.Vector (a,a)
-                         , totalOfBK :: (a,a) -- weight,value
-                         , maxOfBK   :: a
-                         }
-\end{code}
-
-The stack of the state in the searching.
-
-\begin{code}
-data BKStack a = BKStack { bkFP ::  a
-                         , bkCP ::  a
-                         , bkFW ::  a
-                         , bkCW ::  a
-                         , bkX  :: [a]
-                         }
-\end{code}
-
-
-And a three-state type is needed to define the state of a knapsack.
-
-\begin{code}
-type KnapState = (Bool,Bool) -- (Up/Down,Alive/Dead) False/True
-\end{code}
-
-The next to be written is instance.
-
-\begin{code}
-instance (Fractional a,Ord a,Unbox a) => BackTracking (BinKnap a) where
-\end{code}
-
-The ``current select set'' of this problem should be a list of the bit, and the final result of the problem should be the list of the ones selected.
-\begin{code}
-  type Stack       (BinKnap a) = BKStack a
-  type Selects     (BinKnap a) = UV.Vector KnapState
-  type FinalSelect (BinKnap a) = [a]
-\end{code}
-
-
-Then the initial state of the this problem is the list with one pari of \lstinline|True|.
-\begin{code}
-  initState _ = (BKStack 0 0 [(False,False)],UV.fromList [(False,False)])
-\end{code}
-
-The bound check function of the problem.
-\begin{code}
-  boundCheck cfg sel = return limit
-    where bound m c b rs | UV.null rs = 0
-                         | otherwise =
-                           let r = UV.head rs
-                           in if fst r + c < m
-                              then bound m (c + fst r) (b + snd r)
-                                   $ UV.tail rs
-                              else b + (1 - (c-m)/fst r) * snd r
-          limit = UV.length sel <= UV.length (itemsOfBK cfg)
-               && cw + fst h <= m
-            where cw = fst $ curOfBK cfg
-                  h = itemsOfBK cfg ! (UV.length sel - 1)
-                                
-\end{code}
-
-After check the bound, we can check whether a select set is a answers.
-
-\begin{code}
-  isAnswer cfg sel = 
-\end{code}
-
-\begin{code}
-  isEnd cfg sel = return $ UV.length sel == UV.length (itemsOfBK cfg)
-               && UV.and (UV.map sel)
+bknap :: (Ord a,Integral a) => [(Ratio a,Ratio a)] -> Ratio a -> ((Ratio a,Ratio a),[Bool]) -- value,weight
+bknap item l = maximum $ filter (\((_,w),_) -> w <= l) $ map (getSum item) sels
+  where sels =[x | x <- mapM (const [True,False]) [1..length item] ]
+        getitem (a,b) True = (a,b)
+        getitem _ False = (0,0)
+        pariAdd (a,b) (c,d) = (a+c,b+d)
+        getSum items sel = (foldl pariAdd (0,0) $ zipWith getitem items sel,sel)
 \end{code}
