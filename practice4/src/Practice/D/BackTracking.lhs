@@ -8,14 +8,18 @@ module Practice.D.BackTracking
        , generalBT
        , NQueens(..)
        , nQueens
-       , bknap
+       , BinKnap(..)
+       , BKStack(..)
+       , evaluatedV
+       , binKnap
        ) where
 
+import Data.List(sortOn)
 import Data.Ratio
 import Control.Monad
 import Control.Monad.Cont
 import Control.Monad.State.Strict
-import Data.Vector.Unboxed (Vector,Unbox,(//),(!))
+import Data.Vector.Unboxed (Vector,Unbox,(//),(!),cons)
 import qualified Data.Vector         as V
 import qualified Data.Vector.Unboxed as UV
 \end{code}
@@ -52,7 +56,7 @@ class BackTracking a where
   type Selects a
   type FinalSelect a
   initState :: a -> (Stack a,Selects a)
-  boundCheck :: a ->Selects a -> BackTrackT (Stack a) r Bool
+  boundCheck :: a -> Selects a -> BackTrackT (Stack a) r Bool
   isAnswer :: a -> Selects a -> BackTrackT (Stack a) r Bool
   isEnd :: a -> Selects a -> BackTrackT (Stack a) r Bool
   next :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
@@ -196,14 +200,102 @@ nQueens n = generalBT (NQueens n)
 \subsection{Binary Knapsack(Problem IV)}
 \label{sec:bt:bk}
 
- 这个真的做不出来了。。
 
 \begin{code}
-bknap :: (Ord a,Integral a) => [(Ratio a,Ratio a)] -> Ratio a -> ((Ratio a,Ratio a),[Bool]) -- value,weight
-bknap item l = maximum $ filter (\((_,w),_) -> w <= l) $ map (getSum item) sels
-  where sels =[x | x <- mapM (const [True,False]) [1..length item] ]
-        getitem (a,b) True = (a,b)
-        getitem _ False = (0,0)
-        pariAdd (a,b) (c,d) = (a+c,b+d)
-        getSum items sel = (foldl pariAdd (0,0) $ zipWith getitem items sel,sel)
+data BinKnap a = BinKnap { bkItems   :: UV.Vector (a,a)
+                         , bkMaxWeg  :: a
+                         }
+                 deriving(Eq,Show)
+\end{code}
+
+\begin{code}
+data BKStack a = BKStack { answerCandidate :: UV.Vector Bool
+                         , finalValue      :: a
+                         , finalWeight     :: a
+                         }
+                 deriving(Eq,Show)
+\end{code}
+
+\begin{code}
+evaluatedV :: (Unbox a,Fractional a,Ord a) => a -> UV.Vector (a,a) -> UV.Vector Bool -> (a,a,a)
+evaluatedV maxWeightLimit items' sels = (totalW,preW,preV)
+  where len = UV.length sels
+        iLen = UV.length items
+        items = UV.reverse items'
+        (itemS,itemC) = UV.splitAt (iLen - len) items
+        doSel (tW,tV) (cW,cV,True ) = (cW + tW,cV + tV)
+        doSel t       (_ ,_ ,False) = t
+        (totalW,totalV) = UV.foldl' doSel (0,0) $ UV.zipWith (\(w,v) c -> (w,v,c)) itemS sels
+        doPrd mWL (tW,tV) (iW,iV) = if iW + tW <= mWL
+                                    then (tW+iW,tV+iV)
+                                    else let per = 1 - (tW - mWL) / iW
+                                         in (tW + iW * per,tV + iV * per)
+        (preW,preV) = UV.foldl' (doPrd maxWeightLimit) (totalW,totalV) itemC
+\end{code}
+
+\begin{code}
+instance (Unbox a,Fractional a,Ord a) => BackTracking (BinKnap a) where
+\end{code}
+
+\begin{code}
+  type FinalSelect (BinKnap a) = ([Bool],[(a,a)])
+  type Selects     (BinKnap a) = UV.Vector Bool
+  type Stack       (BinKnap a) = BKStack a
+\end{code}
+
+\begin{code}
+  initState cfg = ( BKStack{ answerCandidate = UV.fromList []
+                           , finalValue      = 0
+                           , finalWeight     = 0
+                           }
+                  , iS
+                  )
+    where initStat mWL (cW,cV,cS) (iW,iV) = if iW + cW <= mWL
+                                            then (iW + cW,iV + cV,True `cons` cS)
+                                            else (cW,cV,False `cons` cS)
+          (iW,iV,iS) = UV.foldl' (initStat (bkMaxWeg cfg)) (0,0,UV.fromList []) $ bkItems cfg
+\end{code}
+
+\begin{code}
+  boundCheck cfg sel = do
+    let (_,_,eV) = evaluatedV (bkMaxWeg cfg) (bkItems cfg) sel
+    BKStack _ fV _ <- get
+    return $ eV > fV 
+\end{code}
+
+\begin{code}
+  isAnswer cfg sels = do
+    return $ UV.length (bkItems cfg) == UV.length sels
+\end{code}
+\begin{code}
+  isEnd _ sels = return $ UV.null sels
+\end{code}
+\begin{code}
+  next cfg sels =
+    if UV.length (bkItems cfg) == UV.length sels
+    then return $ rollbackNext sels 
+    else return $ True `cons` sels
+    where rollbackNext sl =
+            if UV.null sl then  sl
+            else let h = UV.head sl
+                 in if h then sl // [(0,False)]
+                    else rollbackNext $ UV.tail sl
+\end{code}
+\begin{code}
+  back cfg sels = rollbackNext sels
+    where rollbackNext sl =
+            if UV.null sl then return sl
+            else let h = UV.head sl
+                 in if h then return $ sl // [(0,False)]
+                    else rollbackNext $ UV.tail sl
+  pushAnswer cfg sels = do
+    let (fW,_,fV) = evaluatedV (bkMaxWeg cfg) (bkItems cfg) sels
+    put $ BKStack sels fV fW
+  toFinal cfg (BKStack sl _ _) = (UV.toList $ UV.reverse sl,UV.toList $ bkItems cfg)
+\end{code}
+
+
+\begin{code}
+binKnap :: (Unbox a,Fractional a,Ord a) => a -> [(a,a)] -> ([Bool],[(a,a)])
+binKnap maxWeight items = generalBT $ BinKnap (UV.fromList $ sortOn (\(a,b) -> b / a) items) maxWeight
 \end{code}
