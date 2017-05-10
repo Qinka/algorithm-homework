@@ -66,13 +66,13 @@ class BackTracking a where
 \end{code}
 
 Then type\footnote{with type family} \lstinline|Selects a| is the answer of the current state.
-The ``variable'' \lstinline|initState| is the initial state of the answer. 
+The method \lstinline|initState| is the initial state of the answer. 
 The method \lstinline|boundCheck| will check the bound of the answer.
 The method \lstinline|isAnswer| will check the current status is an answer or not.
 The method \lstinline|isEnd| will check whether the state is at the bottom of the tree.
 The method \lstinline|next| will generate the next state of the answer.
 The method \lstinline|back| will back the former state when failed.
-
+The method \lstinline|pushAnswer| will push the new answer to stack.
 The method \lstinline|toFinal| will transform the current states to final select
 
 Next is the general function to solve the back tracking.
@@ -201,12 +201,20 @@ nQueens n = generalBT (NQueens n)
 \label{sec:bt:bk}
 
 
+The next problem is about solving the binary knapsack problem.
+First of all, we need define the problem to an AST data struct.
+
 \begin{code}
 data BinKnap a = BinKnap { bkItems   :: UV.Vector (a,a)
                          , bkMaxWeg  :: a
                          }
                  deriving(Eq,Show)
 \end{code}
+
+The \lstinline|bkItems| is the place where holds the things to be stolen. The things include the weights and values. The \lstinline|bkMaxWeg| is the max-limit of the weight.
+
+
+Secondly, there should be a stack, a place where hold the current state, and that should has the places to hold the candidate of the answer, the max of the value and weight.
 
 \begin{code}
 data BKStack a = BKStack { answerCandidate :: UV.Vector Bool
@@ -215,6 +223,8 @@ data BKStack a = BKStack { answerCandidate :: UV.Vector Bool
                          }
                  deriving(Eq,Show)
 \end{code}
+
+Then we need to define the bound function to evaluate the possible maximum of the value.
 
 \begin{code}
 evaluatedV :: (Unbox a,Fractional a,Ord a) => a -> UV.Vector (a,a) -> UV.Vector Bool -> (a,a,a)
@@ -233,15 +243,21 @@ evaluatedV maxWeightLimit items' sels = (totalW,preW,preV)
         (preW,preV) = UV.foldl' (doPrd maxWeightLimit) (totalW,totalV) itemC
 \end{code}
 
+Finally, there the instance of the BackTracking can be written.
+
 \begin{code}
 instance (Unbox a,Fractional a,Ord a) => BackTracking (BinKnap a) where
 \end{code}
 
+The three type, for type family, are ``defined'' here.
+  
 \begin{code}
   type FinalSelect (BinKnap a) = ([Bool],[(a,a)])
   type Selects     (BinKnap a) = UV.Vector Bool
   type Stack       (BinKnap a) = BKStack a
 \end{code}
+
+To get the initial state and the initial selects of the items, the \lstinline|initState| will be define.
 
 \begin{code}
   initState cfg = ( BKStack{ answerCandidate = UV.fromList []
@@ -256,6 +272,8 @@ instance (Unbox a,Fractional a,Ord a) => BackTracking (BinKnap a) where
           (iW,iV,iS) = UV.foldl' (initStat (bkMaxWeg cfg)) (0,0,UV.fromList []) $ bkItems cfg
 \end{code}
 
+With \lstinline|evaluatedV|, the bound-check function can be written.
+
 \begin{code}
   boundCheck cfg sel = do
     let (_,_,eV) = evaluatedV (bkMaxWeg cfg) (bkItems cfg) sel
@@ -263,13 +281,21 @@ instance (Unbox a,Fractional a,Ord a) => BackTracking (BinKnap a) where
     return $ eV > fV 
 \end{code}
 
+The \lstinline|isAnswer| will check the select set, and return the \verb|true| when it is.
+
 \begin{code}
   isAnswer cfg sels = do
     return $ UV.length (bkItems cfg) == UV.length sels
 \end{code}
+
+When the selects set is empty, there is the end of the world.
+
 \begin{code}
   isEnd _ sels = return $ UV.null sels
 \end{code}
+
+The next function will move the current state to the next.
+
 \begin{code}
   next cfg sels =
     if UV.length (bkItems cfg) == UV.length sels
@@ -281,6 +307,9 @@ instance (Unbox a,Fractional a,Ord a) => BackTracking (BinKnap a) where
                  in if h then sl // [(0,False)]
                     else rollbackNext $ UV.tail sl
 \end{code}
+
+The back function will get the ``next'' state of the previous state when something failed.
+
 \begin{code}
   back cfg sels = rollbackNext sels
     where rollbackNext sl =
@@ -288,9 +317,16 @@ instance (Unbox a,Fractional a,Ord a) => BackTracking (BinKnap a) where
             else let h = UV.head sl
                  in if h then return $ sl // [(0,False)]
                     else rollbackNext $ UV.tail sl
+\end{code}
+
+When a select set is the an 
+
+\begin{code}
   pushAnswer cfg sels = do
     let (fW,_,fV) = evaluatedV (bkMaxWeg cfg) (bkItems cfg) sels
     put $ BKStack sels fV fW
+\end{code}
+\begin{code}
   toFinal cfg (BKStack sl _ _) = (UV.toList $ UV.reverse sl,UV.toList $ bkItems cfg)
 \end{code}
 
