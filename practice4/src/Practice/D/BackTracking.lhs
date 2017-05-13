@@ -55,14 +55,14 @@ class BackTracking a where
   type Stack a
   type Selects a
   type FinalSelect a
-  initState :: a -> (Stack a,Selects a)
+  initState  :: a -> (Stack a,Selects a)
   boundCheck :: a -> Selects a -> BackTrackT (Stack a) r Bool
-  isAnswer :: a -> Selects a -> BackTrackT (Stack a) r Bool
-  isEnd :: a -> Selects a -> BackTrackT (Stack a) r Bool
-  next :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
-  back :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
+  isAnswer   :: a -> Selects a -> BackTrackT (Stack a) r Bool
+  isEnd      :: a -> Selects a -> BackTrackT (Stack a) r Bool
+  next       :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
+  back       :: a -> Selects a -> BackTrackT (Stack a) r (Selects a)
   pushAnswer :: a -> Selects a -> BackTrackT (Stack a) r ()
-  toFinal :: a -> Stack a -> FinalSelect a
+  toFinal    :: a -> Stack a -> FinalSelect a
 \end{code}
 
 Then type\footnote{with type family} \lstinline|Selects a| is the answer of the current state.
@@ -73,7 +73,7 @@ The method \lstinline|isEnd| will check whether the state is at the bottom of th
 The method \lstinline|next| will generate the next state of the answer.
 The method \lstinline|back| will back the former state when failed.
 The method \lstinline|pushAnswer| will push the new answer to stack.
-The method \lstinline|toFinal| will transform the current states to final select
+The method \lstinline|toFinal| will transform the current states to final selection set.
 
 Next is the general function to solve the back tracking.
 
@@ -115,7 +115,7 @@ instance (Unbox a,Integral a,Ord a) => BackTracking (NQueens a) where
 \end{code}
 
 First of all, the current selecting state of this problem should be \lstinline|Vector| or the unboxed one,
-and so does the final select.
+and so does the final selection set.
 
 \begin{code}
   type Stack       (NQueens a) =         [[a]]
@@ -183,7 +183,7 @@ Push the answer to stack.
   pushAnswer cfg i = modify (\s -> UV.toList i:s)
 \end{code}
 
-Finally, we need a function to transform the ``current state select set'' to final answer.
+Finally, we need a function to transform the ``current state selecttion set'' to final answer.
 
 \begin{code}
   toFinal _ =id
@@ -196,7 +196,6 @@ nQueens :: (Unbox a,Integral a,Ord a) => a -> [[a]]
 nQueens n = generalBT (NQueens n)
 \end{code}
 
-\endinput
 \subsection{Binary Knapsack(Problem IV)}
 \label{sec:bt:bk}
 
@@ -257,7 +256,7 @@ The three type, for type family, are ``defined'' here.
   type Stack       (BinKnap a) = BKStack a
 \end{code}
 
-To get the initial state and the initial selects of the items, the \lstinline|initState| will be define.
+To get the initial state and the initial selections of the items, the \lstinline|initState| will be define.
 
 \begin{code}
   initState cfg = ( BKStack{ answerCandidate = UV.fromList []
@@ -281,14 +280,14 @@ With \lstinline|evaluatedV|, the bound-check function can be written.
     return $ eV > fV 
 \end{code}
 
-The \lstinline|isAnswer| will check the select set, and return the \verb|true| when it is.
+The \lstinline|isAnswer| will check the selection set, and return the \verb|true| when it is.
 
 \begin{code}
   isAnswer cfg sels = do
     return $ UV.length (bkItems cfg) == UV.length sels
 \end{code}
 
-When the selects set is empty, there is the end of the world.
+When the selecttion sets is empty, there is the end of the world.
 
 \begin{code}
   isEnd _ sels = return $ UV.null sels
@@ -319,19 +318,98 @@ The back function will get the ``next'' state of the previous state when somethi
                     else rollbackNext $ UV.tail sl
 \end{code}
 
-When a select set is the an 
+When a selection set is the an answer, the following function will push the answer to the stack of the ``state''.
 
 \begin{code}
   pushAnswer cfg sels = do
     let (fW,_,fV) = evaluatedV (bkMaxWeg cfg) (bkItems cfg) sels
     put $ BKStack sels fV fW
 \end{code}
+
+When the searching ended, the final answer will be transformed from the ``stack of state''.
+
 \begin{code}
   toFinal cfg (BKStack sl _ _) = (UV.toList $ UV.reverse sl,UV.toList $ bkItems cfg)
 \end{code}
 
+Finally, the wraper of getting answer can be defined.
 
 \begin{code}
 binKnap :: (Unbox a,Fractional a,Ord a) => a -> [(a,a)] -> ([Bool],[(a,a)])
 binKnap maxWeight items = generalBT $ BinKnap (UV.fromList $ sortOn (\(a,b) -> b / a) items) maxWeight
 \end{code}
+
+
+\subsection{Test \& Example}
+\label{sec:bt:test}
+
+Firstly, the solve of the n-queens problem will be tested.
+
+The 4-queens will be the test case, and the problem will be:
+
+\begin{spec}
+nQueens (4 :: Int)
+\end{spec}
+
+Then the output is:
+
+\begin{ghci}
+ghciLL> nQueens (4::Int)
+[[1,3,0,2],[2,0,3,1]]
+\end{ghci}
+
+That means such figers will be like figure \ref{fig:bt:nq:rt1} and figure \ref{fig:bt:nq:rt2}.
+
+\begin{figure}[h!]
+    \centering
+    \def\iQueen{\includegraphics[width=1cm]{res/th.jpg}}
+    \begin{tikzpicture}[line width=1mm, square/.style={draw=#1, minimum size=2cm,anchor=south west}]
+    \matrix[matrix of nodes,nodes={square=black}, column sep=0pt, row sep=0pt, nodes in empty cells]
+    {
+        
+        & \iQueen & & \\
+        & & & \iQueen \\
+       \iQueen & & & \\
+        & & \iQueen & \\
+    };
+    \end{tikzpicture}
+    \caption{Result I}
+    \label{fig:bt:nq:rt1}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\def\iQueen{\includegraphics[width=1cm]{res/th.jpg}}
+\begin{tikzpicture}[line width=1mm, square/.style={draw=#1, minimum size=2cm,anchor=south west}]
+\matrix[matrix of nodes,nodes={square=black}, column sep=0pt, row sep=0pt, nodes in empty cells]
+{
+    
+    & & \iQueen & \\
+    \iQueen & & & \\
+    & & & \iQueen \\
+    & \iQueen & & \\
+};
+\end{tikzpicture}
+\caption{Result II}
+\label{fig:bt:nq:rt2}
+\end{figure}
+
+
+Then the solve of the binary knapsack problem will be tested.
+
+If we have a knapsack which can only hold 10 weight things, and the shop has an item-A, whose weight and value is 4 and 6,
+an item-B, whose weight and value is 10 and 10, and an item-C, whose weight and value is 20 and 200.
+
+So the test code will be:
+
+\begin{spec}
+binKnap 10 [(6,4),(10,10),(200,20)]
+\end{spec}
+
+\begin{ghci}
+ghciLL> binKnap 10 [(4,6),(10,10),(20,200)]
+([True,False,False],[(10.0,10.0),(4.0,6.0),(20.0,200.0)])
+\end{ghci}
+
+That means we just ``steal'' the item-B.
+
