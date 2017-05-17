@@ -14,6 +14,7 @@ maintainer:          qinka@live.com
 build-type:          Simple
                      
 extra-doc-files:     report.tex
+                     res/th.jpg
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
